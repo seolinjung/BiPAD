@@ -9,21 +9,25 @@ from sklearn.tree import DecisionTreeClassifier
 from processing.process_images import scikit_preprocess
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-def ocr_features(ocrs):
+def extract_ocr_features(ocrs):
     vectorizer = TfidfVectorizer(
         input = "content",
         token_pattern = r"(?u)[\w'\-:.,%]+"
     )
     features = vectorizer.fit_transform(ocrs)
-    vectorizer.get_feature_names_out()
     return features
+
+# def extract_image_features(paths):
+
 
 def main():
     raw_data = pd.read_csv(Path.cwd() / "data" / "final_ground_truth.csv")
+    raw_data["ocr"] = raw_data["ocr"].replace(np.nan, "")
     labels = raw_data["gt"]
     paths = raw_data["path"]
     ocrs = raw_data["ocr"]
-    ocr_features = ocr_features(ocrs)
+    ocr_features = extract_ocr_features(ocrs)
+    print(ocr_features)
     
 
 

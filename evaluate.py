@@ -20,3 +20,5 @@ def evaluate_sota(root_path):
         }
     )
     cleaned_sota = []
+
+def evaluate()

@@ -8,6 +8,8 @@ import pandas as pd
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 
+def 
+
 def sync_data(root_path):
 
     def clean_format(value):
@@ -49,9 +51,9 @@ def sync_data(root_path):
     print(final_df['subcategory'].value_counts())
     final_df.to_csv(root_path / "final_ground_truth.csv", index=False)
 
-def fuse_data():
-    adblock_path = Path("../data") / "adblock" / "adshots"
-    control_path = Path("../data") / "control" / "adshots"
+def fuse_data(root_path):
+    adblock_path = root_path / "data" / "adblock" / "adshots"
+    control_path = root_path / "data" / "control" / "adshots"
     adblock_data = [i for i in adblock_path.iterdir()]
     control_data = [i for i in control_path.iterdir()]
     data = []

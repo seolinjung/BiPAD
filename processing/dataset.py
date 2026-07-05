@@ -6,13 +6,15 @@ import pandas as pd
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 
+from processing.process_data import fuse_data
+
 class AdsDataset(Dataset):
     def __init__(self, root, gt_csv):
         self.data = pd.read_csv(gt_csv)
         self.root = root
         self.adblock_path = self.root / "data" / "adblock" / "adshots"
         self.control_path = self.root / "data" / "control" / "adshots"
-        self.data = self.fuse_data()
+        self.data = fuse_data(root)
 
     def __len__(self):
         return len(self.data)
