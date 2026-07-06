@@ -6,9 +6,27 @@ import ast
 import json
 import pandas as pd
 import numpy as np
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, random_split, Subset
 
-def 
+from .dataset import AdsDataset
+
+def get_default_data_split(root_path, dataset_length):
+    with open(root_path / "config.yaml", "r") as f:
+        test_indices = yaml.safe_load(f)["test"]
+    complete_indices = np.arange(dataset_length)
+    train_indices = complete_indices[~np.isin(complete_indices, test_indices)]
+    return train_indices, test_indices
+
+def update_data_split(root_path, full_dataset: Dataset):
+    train_dataset, test_dataset = random_split(full_dataset, [len(full_dataset) - 100, 100])
+    test_indices = { "test": test_dataset.indices }
+    with open(root_path / "config.yaml", "w") as f:
+        yaml.dump(test_indices, f, default_flow_style=False, sort_keys=False)
+    return train_dataset.indices, test_indices
+
+def get_ground_truth(root_path, dataset_length, test_indices):
+    train_indices, test_indices = get_default_data_split(root_path, dataset_length)
+    # train_labels = 
 
 def sync_data(root_path):
 
