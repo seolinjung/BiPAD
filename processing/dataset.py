@@ -6,11 +6,17 @@ import pandas as pd
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, random_split
 class AdsDataset(Dataset):
-    def __init__(self, root, gt_csv):
-        self.data = pd.read_csv(gt_csv)
+    def __init__(self, root, csv_file):
+        self.data = pd.read_csv(csv_file)
         self.root = root
         self.adblock_path = self.root / "data" / "adblock" / "adshots"
         self.control_path = self.root / "data" / "control" / "adshots"
+
+    def get_de_indices(self):
+         return self.data.index[self.data['region'] == 'DE']
+    
+    def get_us_indices(self):
+         return self.data.index[self.data['region'] == 'US']
 
     def __len__(self):
         return len(self.data)

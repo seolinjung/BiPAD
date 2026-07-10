@@ -10,7 +10,7 @@ from skimage.feature import hog
 from torch.utils.data import Subset, Dataset
 
 from processing.process_images import scikit_preprocess
-from processing.process_data import get_default_data_split
+from processing.process_data import get_region_based_data_split
 
 def format_data():
     raw_data = pd.read_csv(Path.cwd() / "data" / "final_ground_truth.csv")
