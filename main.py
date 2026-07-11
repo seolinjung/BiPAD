@@ -12,8 +12,9 @@ from processing.dataset import AdsDataset
 from processing.process_data import get_region_indices_test, get_region_indices_train
 from processing.clean_data import sync_data
 from tokenize import tokenize
-from processing.extract_features import extract_tfidf
+from processing.extract_features import extract_tfidf, extract_hog
 import decision_tree
+import support_vector_machine
 import evaluate
 
 def get_args():
@@ -37,13 +38,19 @@ def main(args):
         print(evaluate.evaluate_sota_us(test_indices_us, sota_results, data))
     if args.dt:
         text_features = extract_tfidf(data["ocr"].replace(np.nan, ""))
-        # image_features = 
-        # print(tokens)
+        image_features = extract_hog(data["path"], data["subcategory"])
         full_dataset = AdsDataset(root, data, text_features)
         tree = decision_tree.train(train_indices, full_dataset)
-        # print(decision_tree.evaluate_all(tree, test_indices, full_dataset))
         print(decision_tree.evaluate_de(tree, test_indices_de, full_dataset))
         print(decision_tree.evaluate_us(tree, test_indices_us, full_dataset))
+    if args.svm:
+        text_features = extract_tfidf(data["ocr"].replace(np.nan, ""))
+        image_features = extract_hog(data["path"], data["subcategory"])
+        full_dataset = AdsDataset(root, data, text_features)
+        machine = support_vector_machine.train(train_indices, full_dataset)
+        print(support_vector_machine.evaluate_de(machine, test_indices_de, full_dataset))
+        print(support_vector_machine.evaluate_us(machine, test_indices_us, full_dataset))
+
 
 if __name__ == "__main__":
     args = get_args()
