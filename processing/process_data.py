@@ -2,6 +2,26 @@ import yaml
 from pathlib import Path
 import numpy as np
 
+def get_sota_indices_de(test_indices_de, sota_results, data):
+    sota_indices_de = []
+    for idx in test_indices_de:
+        row = data.iloc[idx]
+        path, subcategory = row['path'], row['subcategory']
+        matches = sota_results[sota_results['filename'] == path]
+        sota_idx = matches[matches['type'] == subcategory].index.tolist()
+        sota_indices_de.extend(sota_idx)
+    return sota_indices_de
+
+def get_sota_indices_us(test_indices_us, sota_results, data):
+    sota_indices_us = []
+    for idx in test_indices_us:
+        row = data.iloc[idx]
+        path, subcategory = row['path'], row['subcategory']
+        matches = sota_results[sota_results['filename'] == path]
+        sota_idx = matches[matches['type'] == subcategory].index.tolist()
+        sota_indices_us.extend(sota_idx)
+    return sota_indices_us
+
 def get_region_indices_test(root_path, data):
     config_path = Path(root_path / "test_indices.yaml")
     if not config_path.is_file():

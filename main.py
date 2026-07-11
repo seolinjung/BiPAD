@@ -14,9 +14,11 @@ from processing.clean_data import sync_data
 from tokenize import tokenize
 from processing.extract_features import extract_tfidf
 import decision_tree
+import evaluate
 
 def get_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--sota", required=False, action="store_true")
     parser.add_argument("--dt", required=False, action="store_true")
     parser.add_argument("--svm", required=False, action="store_true")
     parser.add_argument("--nouveau", required=False, action="store_true")
@@ -24,15 +26,15 @@ def get_args():
 
 def main(args):
     root = Path.cwd()
-    # sync_data(root)
     data = pd.read_csv(root / "data" / "cleaned_data.csv")
-    # tokens = tokenize(full_dataset)
+    sota_results = pd.read_csv(root / "prior" / "llm_annotation.csv")
     test_indices_de, test_indices_us = get_region_indices_test(root, data)
     train_indices_de, train_indices_us = get_region_indices_train(data, test_indices_de, test_indices_us)
     test_indices = test_indices_de + test_indices_us
     train_indices = train_indices_de + train_indices_us
-    # train_indices, test_indices = get_region_based_data_split(root, len(data))
-    # de_indices, us_indices = get_test_indices(root)
+    if args.sota:
+        print(evaluate.evaluate_sota_de(test_indices_de, sota_results, data))
+        print(evaluate.evaluate_sota_us(test_indices_us, sota_results, data))
     if args.dt:
         text_features = extract_tfidf(data["ocr"].replace(np.nan, ""))
         # image_features = 
