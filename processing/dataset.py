@@ -1,4 +1,5 @@
 from torch.utils.data import Dataset
+import torch
 class AdsDataset(Dataset):
     def __init__(self, root, data, features):
         self.data = data
@@ -22,3 +23,13 @@ class AdsDataset(Dataset):
         row = self.data.iloc[idx]
         row["path"] = self.root / "data" / row["subcategory"] / "adshots" / row["path"]
         return row
+    
+class RobertaAdsDataset(AdsDataset):
+    def __getitem__(self, idx):
+        row = self.data.iloc[idx]
+        encoded = self.features[idx]
+        return {
+            "input_ids": torch.tensor(encoded["input_ids"], dtype=torch.long),
+            "attention_mask": torch.tensor(encoded["attention_mask"], dtype=torch.long),
+            "labels": torch.tensor(row["gt"], dtype=torch.int64)
+        }

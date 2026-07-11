@@ -11,7 +11,6 @@ from skimage.transform import rescale, resize, downscale_local_mean
 def scikit_preprocess(img_path):
     img = Image.open(img_path).convert("L")
     img = img.resize(size=(224,224))
-    # img = np.array(img, dtype=np.float32) / 255.0
     return img
 
 def torch_preprocess(img_path):
