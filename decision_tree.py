@@ -2,15 +2,12 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-from sklearn import tree
-from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from skimage.feature import hog
-from torch.utils.data import Subset, Dataset
+from sklearn.metrics import accuracy_score
 
 from processing.process_images import scikit_preprocess
-from processing.process_data import get_region_based_data_split
 
 def format_data():
     raw_data = pd.read_csv(Path.cwd() / "data" / "final_ground_truth.csv")
@@ -39,21 +36,27 @@ def extract_image_features(paths, categories):
 def predict_one(tree, ocr_feature):
     return tree.predict(ocr_feature)
 
-def evaluate(tree, test_indices, full_dataset):
+def evaluate_all(tree, test_indices, full_dataset):
     test_data = full_dataset.data.iloc[test_indices]
-    test_ocr = test_data["ocr"].replace(np.nan, "")
-    test_paths = test_data["path"]
-    test_categories = test_data["categories"]
-    test_features = extract_ocr_features(test_ocr)
-    for idx in test_indices:
-        print(predict_one(tree, test_featires[]))
+    test_features = full_dataset.features[test_indices]
+    predictions = tree.predict(test_features)
+    return accuracy_score(test_data["gt"], predictions)
+
+def evaluate_de(tree, de_indices, full_dataset):
+    test_data = full_dataset.data.iloc[de_indices]
+    test_features = full_dataset.features[de_indices]
+    predictions = tree.predict(test_features)
+    return accuracy_score(test_data["gt"], predictions)
+
+def evaluate_us(tree, us_indices, full_dataset):
+    test_data = full_dataset.data.iloc[us_indices]
+    test_features = full_dataset.features[us_indices]
+    predictions = tree.predict(test_features)
+    return accuracy_score(test_data["gt"], predictions)
 
 def train(train_indices, full_dataset):
     train_data = full_dataset.data.iloc[train_indices]
-    labels, paths, categories, ocrs = train_data["gt"], train_data["path"], train_data["subcategory"], train_data["ocr"].replace(np.nan, "")
-    ocr_features = extract_ocr_features(ocrs)
-    # image_features = extract_image_features(paths, categories)
-    tree = tree.DecisionTreeClassifier()
-    tree = tree.fit()
-    # print(image_features)
+    train_features = full_dataset.features[train_indices]
+    tree = DecisionTreeClassifier()
+    tree.fit(train_features, train_data["gt"])
     return tree

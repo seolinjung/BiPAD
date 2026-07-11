@@ -1,14 +1,6 @@
-import os
-import yaml
-from pathlib import Path
-import torch
 import ast
 import json
 import pandas as pd
-import numpy as np
-from torch.utils.data import Dataset, DataLoader, random_split, Subset
-
-from .dataset import AdsDataset
 
 def sync_data(root_path):
 

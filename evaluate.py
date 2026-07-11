@@ -9,7 +9,7 @@ from torch.utils.data import Dataset, DataLoader
 from processing import process_data
 
 def evaluate_sota(root_path):
-    final_gt = pd.read_csv(root_path / "data" / "final_ground_truth.csv")
+    final_gt = pd.read_csv(root_path / "data" / "cleaned_data.csv")
     sota_results = pd.read_csv(root_path / "prior" / "llm_annotations.csv")
     # filename/ type/ path/ llm_annotation
     original = original.rename(

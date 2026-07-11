@@ -1,23 +1,20 @@
-import os
-import yaml
-from pathlib import Path
-import torch
-import pandas as pd
-import numpy as np
-from torch.utils.data import Dataset, DataLoader, random_split
+from torch.utils.data import Dataset
 class AdsDataset(Dataset):
-    def __init__(self, root, csv_file):
-        self.data = pd.read_csv(csv_file)
+    def __init__(self, root, data, features):
+        self.data = data
         self.root = root
+        self.features = features
         self.adblock_path = self.root / "data" / "adblock" / "adshots"
         self.control_path = self.root / "data" / "control" / "adshots"
+        self.de_indices = self.get_de_indices
+        self.us_indices = self.get_us_indices
 
     def get_de_indices(self):
          return self.data.index[self.data['region'] == 'DE']
     
     def get_us_indices(self):
          return self.data.index[self.data['region'] == 'US']
-
+    
     def __len__(self):
         return len(self.data)
 

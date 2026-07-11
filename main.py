@@ -9,8 +9,10 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader, random_split
 
 from processing.dataset import AdsDataset
-from processing.process_data import get_region_based_data_split, get_default_data_split, update_data_split
+from processing.process_data import get_region_indices_test, get_region_indices_train
 from processing.clean_data import sync_data
+from tokenize import tokenize
+from processing.extract_features import extract_tfidf
 import decision_tree
 
 def get_args():
@@ -23,14 +25,23 @@ def get_args():
 def main(args):
     root = Path.cwd()
     # sync_data(root)
-    full_dataset = AdsDataset(root, root / "data" / "final_ground_truth.csv")
-    tokens = 
-    train_indices, test_indices = get_region_based_data_split(root, len(full_dataset))
+    data = pd.read_csv(root / "data" / "cleaned_data.csv")
+    # tokens = tokenize(full_dataset)
+    test_indices_de, test_indices_us = get_region_indices_test(root, data)
+    train_indices_de, train_indices_us = get_region_indices_train(data, test_indices_de, test_indices_us)
+    test_indices = test_indices_de + test_indices_us
+    train_indices = train_indices_de + train_indices_us
+    # train_indices, test_indices = get_region_based_data_split(root, len(data))
+    # de_indices, us_indices = get_test_indices(root)
     if args.dt:
-        decision_tree.train(train_indices, full_dataset)
-        decision_tree.evaluate(test_indices, full_dataset)
-
-
+        text_features = extract_tfidf(data["ocr"].replace(np.nan, ""))
+        # image_features = 
+        # print(tokens)
+        full_dataset = AdsDataset(root, data, text_features)
+        tree = decision_tree.train(train_indices, full_dataset)
+        # print(decision_tree.evaluate_all(tree, test_indices, full_dataset))
+        print(decision_tree.evaluate_de(tree, test_indices_de, full_dataset))
+        print(decision_tree.evaluate_us(tree, test_indices_us, full_dataset))
 
 if __name__ == "__main__":
     args = get_args()
