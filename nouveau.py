@@ -57,7 +57,7 @@ def train(train_indices, roberta_dataset, device):
 
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-06, weight_decay=0.00)
-    epochs = 20
+    epochs = 80
     
     train_loader = DataLoader(
         train_dataset,
