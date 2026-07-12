@@ -24,7 +24,6 @@ def get_region_indices_test(root_path, data):
     test_indices_us = test_indices.get('us', {})
     if not test_indices_de or not test_indices_us:
         return update_region_indices_test(root_path, data)
-    print(len(test_indices_de) + len(test_indices_us))
     return test_indices_de, test_indices_us
 
 def update_region_indices_test(root_path, data):

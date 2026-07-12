@@ -62,11 +62,11 @@ def main(args):
         de_tokenizer = AutoTokenizer.from_pretrained("FacebookAI/xlm-roberta-large-finetuned-conll03-german")
         en_tokenizer = AutoTokenizer.from_pretrained("FacebookAI/xlm-roberta-large")
         tokens = nouveau.tokenize(data, de_tokenizer, en_tokenizer)
-        print(tokens)
+        # print(tokens)
         roberta_dataset = RobertaAdsDataset(root, data, tokens)
-        full_dataset = AdsDataset(root, data, tokens)
+        # full_dataset = AdsDataset(root, data, tokens)
         nouveau.train(train_indices, roberta_dataset)
-        nouveau.evaluate_de(test_indices, roberta_dataset, full_dataset)
+        # nouveau.evaluate_de(test_indices, roberta_dataset)
 
 if __name__ == "__main__":
     args = get_args()
