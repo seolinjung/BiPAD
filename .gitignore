@@ -4,3 +4,4 @@ __pycache__
 launch.json
 .vscode
 nouveau/
+test_model.pth
