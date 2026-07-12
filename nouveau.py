@@ -1,5 +1,5 @@
 import torch
-from transformers import AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import Trainer, TrainingArguments
 from sklearn.metrics import f1_score, precision_score, recall_score
 from torch.utils.data import Subset, DataLoader
@@ -7,10 +7,11 @@ import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 
-def tokenize(data, de_tokenizer, en_tokenizer):
+tokenizer = AutoTokenizer.from_pretrained("FacebookAI/xlm-roberta-large")
+
+def tokenize(data):
     tokens = []
     for row in data.itertuples():
-        tokenizer = de_tokenizer if row.region == 'DE' else en_tokenizer
         tokenized = tokenizer(
             row.ocr,
             truncation=True,
@@ -50,14 +51,11 @@ def evaluate(model, test_indices, roberta_dataset, device):
 
 def train(train_indices, roberta_dataset, device):
     train_dataset = Subset(roberta_dataset, train_indices)
-    model = AutoModelForSequenceClassification.from_pretrained(
-        "FacebookAI/xlm-roberta-large",
-        num_labels=2
-    ).to(device)
+    model = AutoModelForSequenceClassification.from_pretrained("FacebookAI/xlm-roberta-large",num_labels=2).to(device)
 
     loss_function = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=1e-06, weight_decay=0.00)
-    epochs = 80
+    optimizer = optim.AdamW(model.parameters(), lr=1e-06, weight_decay=0.01)
+    epochs = 60
     
     train_loader = DataLoader(
         train_dataset,
@@ -84,8 +82,7 @@ def train(train_indices, roberta_dataset, device):
             print(f"  batch no. {batch+1} - loss: {current_loss.item():.4f}")
         print(f"\nepoch no. {epoch+1}/{epochs} - loss: {epoch_loss/len(train_loader):.4f}")
 
-    torch.save(
-        model.state_dict(), './test_model.pth'
-    )
+    model.save_pretrained("./nouveau1")
+    tokenizer.save_pretrained("./nouveau1")
 
     return model

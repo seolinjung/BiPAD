@@ -61,9 +61,7 @@ def main(args):
         print(support_vector_machine.evaluate_us(image_machine, test_indices_us, full_image_dataset))
     if args.nouveau:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        de_tokenizer = AutoTokenizer.from_pretrained("FacebookAI/xlm-roberta-large-finetuned-conll03-german")
-        en_tokenizer = AutoTokenizer.from_pretrained("FacebookAI/xlm-roberta-large")
-        tokens = nouveau.tokenize(data, de_tokenizer, en_tokenizer)
+        tokens = nouveau.tokenize(data)
         # print(tokens)
         roberta_dataset = RobertaAdsDataset(root, data, tokens)
         # full_dataset = AdsDataset(root, data, tokens)
