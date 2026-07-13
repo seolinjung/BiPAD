@@ -8,17 +8,17 @@ This repository contains 3 classifier: a decision tree, an SVM, and BiPAD.
 
 To run the decision tree, type
 ```
-    python main.py --dt
+python main.py --dt
 ```
 
 To run the SVM, type
 ```
-    python main.py --svm
+python main.py --svm
 ```
 
 To run BiPAD, you can specify arguments to train, evaluate, or do both.
 ```
-    python main.py --bipad train evaluation
+python main.py --bipad train evaluation
 ```
 
 Please note that in order to run BiPAD, you must have the model folder titled "bipad" under the root of this repository.
