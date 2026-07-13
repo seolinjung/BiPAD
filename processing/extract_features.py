@@ -7,7 +7,22 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from skimage.feature import hog
 
+from transformers import AutoTokenizer
+
 from processing.process_images import scikit_preprocess
+
+def extract_tokens(data):
+    tokenizer = AutoTokenizer.from_pretrained("FacebookAI/xlm-roberta-large")
+    tokens = []
+    for row in data.itertuples():
+        tokenized = tokenizer(
+            row.ocr,
+            truncation=True,
+            padding="max_length",
+            max_length=256
+        )
+        tokens.append(tokenized)
+    return tokens
 
 def extract_tfidf(ocrs):
     vectorizer = TfidfVectorizer(

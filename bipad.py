@@ -1,41 +1,37 @@
 import torch
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from transformers import Trainer, TrainingArguments
-from sklearn.metrics import f1_score, precision_score, recall_score
-from torch.utils.data import Subset, DataLoader
 import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 
-tokenizer = AutoTokenizer.from_pretrained("FacebookAI/xlm-roberta-large")
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from sklearn.metrics import f1_score, precision_score, recall_score
+from torch.utils.data import Subset, DataLoader
 
-def tokenize(data):
-    tokens = []
-    for row in data.itertuples():
-        tokenized = tokenizer(
-            row.ocr,
-            truncation=True,
-            padding="max_length",
-            max_length=256
-        )
-        tokens.append(tokenized)
-    return tokens
+from processing.dataset import RobertaAdsDataset
+from processing.extract_features import extract_tokens
 
-def evaluate(model, test_indices, roberta_dataset, device):
+def get_metrics(gt, predictions):
+    return {
+        "f1": f1_score(gt, predictions),
+        "precision": precision_score(gt, predictions),
+        "recall": recall_score(gt, predictions)
+    }
+
+def evaluate(model, roberta_dataset, test_indices, device):
     test_dataset = Subset(roberta_dataset, test_indices)
-    # model = torch.load("test_model.pth", map_location=device)
-    # loss_function = nn.CrossEntropyLoss()
     test_loader = DataLoader(
         test_dataset,
-        batch_size=32,
-        shuffle=True
+        batch_size=16,
+        shuffle=False
     )
     all_predictions = []
     all_labels = []
+
     model.eval()
     print(f"\nstarting testing")
+
     with torch.no_grad():
-        for batch, data in enumerate(test_loader):
+        for _, data in enumerate(test_loader):
             logits = model(
                 input_ids=data['input_ids'].to(device),
                 attention_mask=data['attention_mask'].to(device)
@@ -47,23 +43,24 @@ def evaluate(model, test_indices, roberta_dataset, device):
 
     all_predictions = torch.stack(all_predictions).cpu().numpy()
     all_labels = torch.stack(all_labels).cpu().numpy()
-    print(f1_score(all_labels, all_predictions))
+    return get_metrics(all_labels, all_predictions)
 
-def train(train_indices, roberta_dataset, device):
-    train_dataset = Subset(roberta_dataset, train_indices)
+def train(data, roberta_dataset, train_indices, device):
+    tokenizer = AutoTokenizer.from_pretrained("FacebookAI/xlm-roberta-large")
     model = AutoModelForSequenceClassification.from_pretrained("FacebookAI/xlm-roberta-large",num_labels=2).to(device)
-
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=1e-06, weight_decay=0.01)
     epochs = 60
     
+    train_dataset = Subset(roberta_dataset, train_indices)
     train_loader = DataLoader(
         train_dataset,
-        batch_size=16,
+        batch_size=32,
         shuffle=True
     )
 
-    print(f"\nstarting fine-tuning")
+    print(f"\n~starting training~")
+
     for epoch in range(epochs):
         model.train()
         print(f"\nepoch no. {epoch+1}")
@@ -73,7 +70,6 @@ def train(train_indices, roberta_dataset, device):
                 input_ids=data['input_ids'].to(device),
                 attention_mask=data['attention_mask'].to(device)
             ).logits
-            # probabilities = torch.softmax(logits, dim=0)
             current_loss = loss_function(logits, data['labels'].to(device))
             current_loss.backward()
             optimizer.step()
@@ -86,3 +82,23 @@ def train(train_indices, roberta_dataset, device):
     tokenizer.save_pretrained("./nouveau1")
 
     return model
+
+def run(root, data, train_indices, test_indices_de, test_indices_us, mode, device):
+    tokens = extract_tokens(data)
+    roberta_dataset = RobertaAdsDataset(root, data, tokens)
+    test_indices = test_indices_de + test_indices_us\
+    
+    if mode=="train":
+        train(root, roberta_dataset, train_indices, device)
+    if mode=="evaluate":
+        model_path = root / "bipad"
+        if not model_path.is_dir():
+            print("\nCould not locate model folder. Aborting...")
+            return
+        model = AutoModelForSequenceClassification.from_pretrained(model_path).to(device)
+        results_all = evaluate(model, roberta_dataset, test_indices, device)
+        results_de = evaluate(model, roberta_dataset, test_indices_de, device)
+        results_us = evaluate(model, roberta_dataset, test_indices_us, device)
+        print(results_all)
+        print(results_de)
+        print(results_us)

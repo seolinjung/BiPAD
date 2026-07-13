@@ -3,5 +3,5 @@ prior/
 __pycache__
 launch.json
 .vscode
-nouveau/
+bipad/
 test_model.pth

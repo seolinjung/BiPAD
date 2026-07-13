@@ -1,72 +1,68 @@
-import yaml
 import argparse
 from pathlib import Path
-import json
 
-import yaml
 import pandas as pd
 import numpy as np
-from torch.utils.data import Dataset, DataLoader, random_split
 
-from transformers import AutoTokenizer
-from processing.dataset import AdsDataset, RobertaAdsDataset
 from processing.process_data import get_region_indices_test, get_region_indices_train
-from processing.clean_data import sync_data
-from processing.extract_features import extract_tfidf, extract_hog
+
 import decision_tree
 import support_vector_machine
-import nouveau
-import evaluate
+import bipad
+import sota
 import torch
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--sota", required=False, action="store_true")
-    parser.add_argument("--dt", required=False, action="store_true")
-    parser.add_argument("--svm", required=False, action="store_true")
-    parser.add_argument("--nouveau", required=False, action="store_true")
+    parser.add_argument(
+        "dt",
+        action='store_true',
+        required=False,
+        help="run decision tree for both train and eval"
+    )
+    parser.add_argument(
+        "svm",
+        action='store_true',
+        required=False,
+        help="run svm for both train and eval"
+    )
+    parser.add_argument(
+        "sota",
+        action='store_true',
+        required=False,
+        help="run eval for sota"
+    )
+    parser.add_argument(
+        "bipad",
+        type=str,
+        nargs="+",
+        choices=["train", "evaluate"],
+        required=False,
+        help="must specify train, evaluate, or both"
+    )    
     return parser.parse_args()
 
 def main(args):
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     root = Path.cwd()
     data = pd.read_csv(root / "data" / "cleaned_data.csv")
     data["ocr"] = data["ocr"].replace(np.nan, "")
-    sota_results = pd.read_csv(root / "prior" / "llm_annotation.csv")
+
     test_indices_de, test_indices_us = get_region_indices_test(root, data)
     train_indices_de, train_indices_us = get_region_indices_train(data, test_indices_de, test_indices_us)
     test_indices = test_indices_de + test_indices_us
     train_indices = train_indices_de + train_indices_us
+
     if args.sota:
-        print(evaluate.evaluate_all(test_indices, sota_results, data))
-        print(evaluate.evaluate_sota_de(test_indices_de, sota_results, data))
-        print(evaluate.evaluate_sota_us(test_indices_us, sota_results, data))
+        sota.run(root, test_indices, data)
     if args.dt:
-        text_features = extract_tfidf(data)
-        # image_features = extract_hog(data["path"], data["subcategory"])
-        full_dataset = AdsDataset(root, data, text_features)
-        # full_image_dataset = AdsDataset(root, data, image_features)
-        tree = decision_tree.train(train_indices, full_dataset)
-        # tree = decision_tree.train(train_indices_de, full_dataset)
-        # image_tree = decision_tree.train(train_indices, full_image_dataset)
-        print(decision_tree.evaluate_de(tree, test_indices_de, full_dataset))
-        print(decision_tree.evaluate_us(tree, test_indices_us, full_dataset))
+        decision_tree.run(root, data, train_indices, test_indices_de, test_indices_us)
     if args.svm:
-        # text_features = extract_tfidf(data["ocr"].replace(np.nan, ""))
-        image_features = extract_hog(data["path"], data["subcategory"])
-        # full_dataset = AdsDataset(root, data, text_features)
-        full_image_dataset = AdsDataset(root, data, image_features)
-        # machine = support_vector_machine.train(train_indices, full_dataset)
-        image_machine = support_vector_machine.train(train_indices, full_image_dataset)
-        print(support_vector_machine.evaluate_de(image_machine, test_indices_de, full_image_dataset))
-        print(support_vector_machine.evaluate_us(image_machine, test_indices_us, full_image_dataset))
-    if args.nouveau:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        tokens = nouveau.tokenize(data)
-        # print(tokens)
-        roberta_dataset = RobertaAdsDataset(root, data, tokens)
-        # full_dataset = AdsDataset(root, data, tokens)
-        model = nouveau.train(train_indices, roberta_dataset, device)
-        nouveau.evaluate(model, test_indices, roberta_dataset, device)
+        support_vector_machine.run(root, data, train_indices, test_indices_de, test_indices_us)
+    if args.bipad:
+        for param in args.bipad:
+            bipad.run(root, data, train_indices, test_indices_de, test_indices_us, param, device)
 
 if __name__ == "__main__":
     args = get_args()
