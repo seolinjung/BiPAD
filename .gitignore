@@ -6,3 +6,4 @@ launch.json
 bipad/
 test_model.pth
 bipad_1
+bipad_epoch_80

@@ -20,7 +20,6 @@ def train(root, data, roberta_dataset, train_indices, device):
     train_only_indices = train_indices[:split]
     val_only_indices = train_indices[split:]
 
-    root / "bipad"
     tokenizer = AutoTokenizer.from_pretrained("FacebookAI/xlm-roberta-large")
     model = AutoModelForSequenceClassification.from_pretrained("FacebookAI/xlm-roberta-large",num_labels=2).to(device)
     loss_function = nn.CrossEntropyLoss()
@@ -100,7 +99,7 @@ def run(root, data, train_indices, test_indices_de, test_indices_us, mode, devic
     if mode=="train":
         train(root, data, roberta_dataset, train_indices, device)
     if mode=="evaluate":
-        model_path = root / "bipad"
+        model_path = root / "bipad_epoch_80"
         if not model_path.is_dir():
             print("\nCould not locate model folder. Aborting...")
             return
