@@ -15,25 +15,25 @@ import torch
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "dt",
+        "--dt",
         action='store_true',
         required=False,
         help="run decision tree for both train and eval"
     )
     parser.add_argument(
-        "svm",
+        "--svm",
         action='store_true',
         required=False,
         help="run svm for both train and eval"
     )
     parser.add_argument(
-        "sota",
+        "--sota",
         action='store_true',
         required=False,
         help="run eval for sota"
     )
     parser.add_argument(
-        "bipad",
+        "--bipad",
         type=str,
         nargs="+",
         choices=["train", "evaluate"],
@@ -43,8 +43,6 @@ def get_args():
     return parser.parse_args()
 
 def main(args):
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     root = Path.cwd()
     data = pd.read_csv(root / "data" / "cleaned_data.csv")
     data["ocr"] = data["ocr"].replace(np.nan, "")
@@ -53,6 +51,8 @@ def main(args):
     train_indices_de, train_indices_us = get_region_indices_train(data, test_indices_de, test_indices_us)
     test_indices = test_indices_de + test_indices_us
     train_indices = train_indices_de + train_indices_us
+    
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     if args.sota:
         sota.run(root, test_indices, data)

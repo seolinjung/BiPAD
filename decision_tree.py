@@ -1,18 +1,11 @@
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import f1_score, precision_score, recall_score
 
-from processing.dataset import AdsDataset
+from dataset import AdsDataset
 from processing.extract_features import extract_tfidf
+from processing.process_data import get_metrics, print_metrics
 
 def predict_one(tree, ocr_feature):
     return tree.predict(ocr_feature)
-
-def get_metrics(gt, predictions):
-    return {
-        "f1": f1_score(gt, predictions),
-        "precision": precision_score(gt, predictions),
-        "recall": recall_score(gt, predictions)
-    }
 
 def train(train_indices, full_dataset):
     train_data = full_dataset.data.iloc[train_indices]
@@ -29,15 +22,13 @@ def evaluate(tree, test_indices, full_dataset):
 
 def run(root, data, train_indices, test_indices_de, test_indices_us):
     test_indices = test_indices_de + test_indices_us
-    text_features = extract_tfidf(data)
+    text_features = extract_tfidf(data["ocr"])
     # image_features = extract_hog(data["path"], data["subcategory"])
     full_dataset = AdsDataset(root, data, text_features)
     # full_image_dataset = AdsDataset(root, data, image_features)
     tree = train(train_indices, full_dataset)
     # image_tree = train(train_indices, full_image_dataset)
-    results_all = evaluate(tree, test_indices)
-    results_de = evaluate(tree, test_indices_de)
-    results_us = evaluate(tree, test_indices_us)
-    print(results_all)
-    print(results_de)
-    print(results_us)
+    results_all = evaluate(tree, test_indices, full_dataset)
+    results_de = evaluate(tree, test_indices_de, full_dataset)
+    results_us = evaluate(tree, test_indices_us, full_dataset)
+    print_metrics(results_all, results_de, results_us)

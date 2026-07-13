@@ -9,6 +9,7 @@ def sync_data(root_path):
         return next(iter(first))
 
     original = pd.read_csv(root_path / "data" / "merged_ground_truth.csv")
+
     original = original.rename(
         columns = {
             "Filename": "path",
@@ -20,13 +21,15 @@ def sync_data(root_path):
     original["subcategory"] = original["subcategory"].apply(clean_format)
     original = original.sort_values("subcategory").reset_index(drop=True)
     original = original.drop_duplicates(subset="path", keep="first")
+
     with open(root_path / "data" / "ocr_adblock.json", "r") as f:
         ocr_adblock = json.load(f)
     with open(root_path / "data" / "ocr_control.json", "r") as f:
         ocr_control = json.load(f)
+
     final = []
+
     for idx, img in original["path"].items():
-        print(idx)
         subcategory_arr = original.loc[idx, "subcategory"].split("_")
         subcategory = subcategory_arr[0]
         region = "DE" if subcategory_arr[1] == "germany" else "US"
@@ -41,7 +44,6 @@ def sync_data(root_path):
         )
     final_df = pd.DataFrame(final)
     final_df['ocr'] = final_df['ocr'].fillna('')
-    print(final_df)
     print(final_df['gt'].value_counts())
     print(final_df['subcategory'].value_counts())
     final_df.to_csv(root_path / "data" / "cleaned_data.csv", index=False)
