@@ -1,4 +1,4 @@
-# Problematic Ad Detection
+# Bilingual Problematic Ad Detection
 
 Inspired by the task behind the paper "Sheep’s clothing, wolfish impact: Automated detection and evaluation of problematic ‘allowed’ advertisements" (Roongta et al., 2025), this project aims to solve the problem of binary classification of problematic online advertisements.
 
