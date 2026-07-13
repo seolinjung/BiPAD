@@ -4,7 +4,18 @@ Inspired by the task behind the paper "Sheep’s clothing, wolfish impact: Autom
 
 ## Models
 
-Upon running `main.py` without specifying an argument, The initial run will generate a fixed train/test data split across the 3 models.
+This repository contains 3 classifier: a decision tree, an SVM, and BiPAD. 
+
+To run the decision tree, type
+```python main.py --dt```
+
+To run the SVM, type
+```python main.py --svm```
+
+To run BiPAD, you can specify arguments to train, evaluate, or do both.
+```python main.py --bipad train evaluation```
+
+Please note that in order to run BiPAD, you must have the model folder titled "bipad" under the root of this repository.
 
 ## Dataset
 
