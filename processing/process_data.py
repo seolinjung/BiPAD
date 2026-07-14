@@ -61,3 +61,19 @@ def get_region_indices_train(data, test_indices_de, test_indices_us):
     train_indices_de = indices_de[~np.isin(indices_de, test_indices_de)]
     train_indices_us = indices_us[~np.isin(indices_us, test_indices_us)]
     return train_indices_de.tolist(), train_indices_us.tolist()
+
+def get_data_count(test_indices_de, test_indices_us, train_indices_de, train_indices_us):
+    train_len_de, train_len_us = len(train_indices_de), len(train_indices_us)
+    train_len_all = train_len_de + train_len_us
+    test_len_de, test_len_us = len(test_indices_de), len(test_indices_us)
+    test_len_all = test_len_de + test_len_us
+    data_count = {
+         "Train": [train_len_all, train_len_de, train_len_us],
+         "Test": [test_len_all, test_len_de, test_len_us]
+    }
+    df = pd.DataFrame.from_dict(data_count)
+    df.index = ["Combined", "DE", "US"]
+    print("\n~Dataset Statistics~")
+    print("\n")
+    print(df)
+    print("\n")

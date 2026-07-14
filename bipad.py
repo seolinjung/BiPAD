@@ -24,7 +24,7 @@ def train(root, data, roberta_dataset, train_indices, device):
     model = AutoModelForSequenceClassification.from_pretrained("FacebookAI/xlm-roberta-large",num_labels=2).to(device)
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=1e-06, weight_decay=0.01)
-    epochs = 80
+    epochs = 40
     
     train_dataset = Subset(roberta_dataset, train_only_indices)
     train_loader = DataLoader(
@@ -104,8 +104,8 @@ def run(root, data, train_indices, test_indices_de, test_indices_us, mode, devic
             print("\nCould not locate model folder. Aborting...")
             return
         model = AutoModelForSequenceClassification.from_pretrained(model_path).to(device)
-        print("\nStarting evaluation...")
         results_all = evaluate(model, roberta_dataset, test_indices, device)
         results_de = evaluate(model, roberta_dataset, test_indices_de, device)
         results_us = evaluate(model, roberta_dataset, test_indices_us, device)
+        print("\n~BiPAD Results~")
         print_metrics(results_all, results_de, results_us)

@@ -31,4 +31,5 @@ def run(root, data, train_indices, test_indices_de, test_indices_us):
     results_all = evaluate(tree, test_indices, full_dataset)
     results_de = evaluate(tree, test_indices_de, full_dataset)
     results_us = evaluate(tree, test_indices_us, full_dataset)
+    print("\n~Decision Tree Results~")
     print_metrics(results_all, results_de, results_us)

@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-from processing.process_data import get_region_indices_test, get_region_indices_train
+from processing.process_data import get_region_indices_test, get_region_indices_train, get_data_count
 
 import decision_tree
 import support_vector_machine
@@ -51,11 +51,13 @@ def main(args):
     train_indices_de, train_indices_us = get_region_indices_train(data, test_indices_de, test_indices_us)
     test_indices = test_indices_de + test_indices_us
     train_indices = train_indices_de + train_indices_us
+
+    get_data_count(test_indices_de, test_indices_us, train_indices_de, train_indices_us)
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     if args.sota:
-        sota.run(root, test_indices, data)
+        sota.run(root, test_indices, test_indices_de, test_indices_us, data)
     if args.dt:
         decision_tree.run(root, data, train_indices, test_indices_de, test_indices_us)
     if args.svm:

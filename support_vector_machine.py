@@ -34,4 +34,5 @@ def run(root, data, train_indices, test_indices_de, test_indices_us):
     results_all = evaluate(machine, test_indices, full_dataset)
     results_de = evaluate(machine, test_indices_de, full_dataset)
     results_us = evaluate(machine, test_indices_us, full_dataset)
+    print("\n~Support Vector Machine Results~")
     print_metrics(results_all, results_de, results_us)
