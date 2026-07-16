@@ -37,7 +37,7 @@ All folders must be placed in the root of the repository.
 
 ## Environment
 
-This project was run in a Conda virtual environment with Python 3.12. To enable, download Conda if you don't have it already and run
+This project was run in a Conda virtual environment with Python 3.12. To enable, download Conda and run
 
 ```
 conda create --name virtue (or a name you desire) python=3.12
