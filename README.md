@@ -1,4 +1,4 @@
-# Bilingual Problematic Ad Detection
+# BiPAD: Bilingual Problematic Ad Detection
 
 Inspired by the task behind the paper "Sheep’s clothing, wolfish impact: Automated detection and evaluation of problematic ‘allowed’ advertisements" [1], this project aims to solve the problem of binary classification of problematic online advertisements.
 
