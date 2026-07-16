@@ -65,12 +65,12 @@ python main.py --svm
 
 To run BiPAD, you can specify arguments to train, evaluate, or do both.
 ```
-python main.py --bipad train evaluation
+python main.py --bipad train evaluate
 ```
 
 If you want to run inference only,
 ```
-python main.py --bipad evaluation
+python main.py --bipad evaluate
 ```
 
 You can also run inference on Roongta et al.'s LLM annotation results,
