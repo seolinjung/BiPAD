@@ -31,7 +31,7 @@ The Google Drive link to the data is available here: https://drive.google.com/fi
 
 `bipad`: Trained model weights. Required if you want to run `python main.py --bipad evaluate` without training first.
 `data`: Images from the original dataset [2]. It contains the original ground truth data published by Roongta et al. under the name `merged_ground_truth.csv` as well as our cleaned version, `cleaned_data.csv`. It is required for all tasks.
-`prior`: SOTA results. Required if you want to run inference on the LLM annotation results by Roongta et al. with `python main.py --sota`.
+`prior`: SOTA results. Required if you want to run inference on the LLM annotation results by Roongta et al.
 
 All folders must be placed in the root of the repository.
 
