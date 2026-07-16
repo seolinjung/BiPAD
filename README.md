@@ -80,7 +80,7 @@ python main.py --sota
 
 ## Test Dataset
 
-All scripts rely on `test_indices.yaml` for loading test indices. The complete test set is fixed to 100 total samples, split between 50 German and English texts. The file expects keys `de` and `en`. Upon a missing `test_indices.yaml`, one will be created with a new randomly selected batch of samples. In order to re-evaluate any model with a different test set, either delete `test_indices.yaml` entirely or just its contents. Inference will be done 3 times, first on the complete test set, the German subset, and lastly the English subset. Results will be displayed on the terminal.
+All scripts rely on `test_indices.yaml` for loading test indices. The complete test set is fixed to 100 total samples, split between 50 German and English texts. The file expects keys `de` and `en`. Upon a missing `test_indices.yaml`, the file will be created with a new randomly selected batch of samples. In order to re-evaluate any model with a different test set, either delete `test_indices.yaml` entirely or just its contents. Inference will be done 3 times: first on the complete test set, the German subset, and lastly the English subset. Results will be displayed on the terminal.
 
 ## References
 [1] Roongta, R., Jose, J., Habib, H., & Greenstadt, R. (2025). Sheep’s clothing, wolfish intent: Automated detection and evaluation of problematic “allowed” 
