@@ -47,7 +47,7 @@ pip install -r requirements.txt
 
 NVIDIA GeForce RTX 5070 Ti was used to run all scripts, but it is not required.
 
-It would be beneficial to be authenticated for Huggingface to avoid rate limits, as the project loads pretrained weights for XLM-RoBERTa. Find instructions [here](https://huggingface.co/docs/huggingface_hub/en/quick-start).
+It would be beneficial to be authenticated for Huggingface to avoid rate limits. Find instructions [here](https://huggingface.co/docs/huggingface_hub/en/quick-start).
 
 ## Scripts
 
