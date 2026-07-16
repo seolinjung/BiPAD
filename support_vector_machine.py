@@ -1,7 +1,4 @@
-import numpy as np
-
 from sklearn import svm
-from sklearn.metrics import f1_score, precision_score, recall_score
 
 from dataset import AdsDataset
 from processing.extract_features import extract_tfidf, extract_hog

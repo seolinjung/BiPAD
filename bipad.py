@@ -24,7 +24,7 @@ def train(root, data, roberta_dataset, train_indices, device):
     model = AutoModelForSequenceClassification.from_pretrained("FacebookAI/xlm-roberta-large",num_labels=2).to(device)
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=1e-06, weight_decay=0.01)
-    epochs = 40
+    epochs = 100
     
     train_dataset = Subset(roberta_dataset, train_only_indices)
     train_loader = DataLoader(
@@ -99,7 +99,7 @@ def run(root, data, train_indices, test_indices_de, test_indices_us, mode, devic
     if mode=="train":
         train(root, data, roberta_dataset, train_indices, device)
     if mode=="evaluate":
-        model_path = root / "bipad_epoch_80"
+        model_path = root / "bipad"
         if not model_path.is_dir():
             print("\nCould not locate model folder. Aborting...")
             return

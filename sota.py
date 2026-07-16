@@ -1,7 +1,5 @@
 import pandas as pd
 
-from sklearn.metrics import f1_score, precision_score, recall_score
-
 from processing.process_data import get_metrics, print_metrics
 
 def get_sota_indices(test_indices, sota_results, data):

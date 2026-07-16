@@ -1,9 +1,5 @@
 data/
 prior/
 __pycache__
-launch.json
 .vscode
 bipad/
-test_model.pth
-bipad_1
-bipad_epoch_80
