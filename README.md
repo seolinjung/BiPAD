@@ -29,7 +29,7 @@ Inspired by the task behind the paper "Sheep’s clothing, wolfish impact: Autom
 
 The Google Drive link to the data is available here: https://drive.google.com/file/d/1yu4FM1AyeoAQt07MrPkorBkl8nPg50OZ/view?usp=sharing. 
 
-`bipad`: Trained model weights. Required if you want to run `python main.py --bipad evaluate` without training first.
+`bipad`: Trained BiPAD weights. Required if you want to run `python main.py --bipad evaluate` without training first.
 `data`: Images from the original dataset [2]. It contains the original ground truth data published by Roongta et al. under the name `merged_ground_truth.csv` as well as our cleaned version, `cleaned_data.csv`. It is required for all tasks.
 `prior`: SOTA results. Required if you want to run inference on the LLM annotation results by Roongta et al.
 
