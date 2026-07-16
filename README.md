@@ -51,7 +51,7 @@ It would be beneficial to be authenticated for Huggingface to avoid rate limits.
 
 ## Scripts
 
-This repository contains 3 classifiers: a decision tree, an SVM, and BiPAD, the bilingual model fine tuned on XLM-RoBERTa. 
+This repository contains a decision tree, an SVM, and BiPAD, the bilingual model fine tuned on XLM-RoBERTa. 
 
 To run the decision tree,
 ```
